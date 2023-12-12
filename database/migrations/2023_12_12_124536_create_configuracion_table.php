@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('nombre');
             $table->string('descripcion')->nullable();
             $table->string('formato')->nullable();
-            $table->foreignId('serie_est_id')->constrained('subpaneles_serie_estadistica');
+            $table->foreignId('sei')->constrained('subpaneles_serie_estadistica');
         });
     }
 
