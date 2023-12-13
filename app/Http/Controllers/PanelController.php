@@ -18,7 +18,7 @@ class PanelController extends Controller
     }
 
     public function show($id) {
-        return Panel::with('seriesEstadisticas')->with('insiders')->with('resultadosAnuales')->find($id);
+        return Panel::with('seriesEstadisticas')->with('seriesEstadisticas.configuraciones.opciones')->with('insiders')->with('resultadosAnuales')->find($id);
     }
 
     public function delete($id) {
