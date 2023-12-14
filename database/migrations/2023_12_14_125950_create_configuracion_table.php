@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('panel_to_resultados_anuales', function (Blueprint $table) {
+        Schema::create('configuraciones', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('panel_id')->constrained('paneles');
-            $table->foreignId('subpanel_res_anual_id')->constrained('subpaneles_resultado_anual');
+            $table->string('nombre');
+            $table->string('descripcion')->nullable();
+            $table->string('formato')->nullable();
+            $table->foreignId('subpanel_id')->constrained('subpaneles');
         });
     }
 
@@ -24,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('panel_to_resultados_anuales');
+        Schema::dropIfExists('configuraciones');
     }
 };

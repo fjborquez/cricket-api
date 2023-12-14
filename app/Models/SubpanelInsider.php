@@ -3,15 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Parental\HasParent;
 
-class SubpanelInsider extends Model
+class SubpanelInsider extends Subpanel
 {
-    use HasFactory;
-    protected $table = 'subpaneles_insider';
-    protected $fillable = ['nombre', 'descripcion', 'url', 'ente'];
-
-    public function paneles() {
-        return $this->belongsToMany(Panel::class, 'panel_to_insiders', 'subpanel_insider_id', 'panel_id');
-    }
+    use HasFactory, HasParent;
 }

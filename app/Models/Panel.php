@@ -15,19 +15,9 @@ class Panel extends Model
     protected $table = 'paneles';
     protected $fillable = ['nombre', 'descripcion'];
 
-    public function seriesEstadisticas(): BelongsToMany
+    public function subpaneles(): BelongsToMany
     {
-        return $this->belongsToMany(SubpanelSerieEstadistica::class, 'panel_to_serie_estadistica', 'panel_id', 'subpaneles_ser_est_id');
-    }
-
-    public function insiders(): belongsToMany
-    {
-        return $this->belongsToMany(SubpanelInsider::class, 'panel_to_insiders', 'panel_id', 'subpanel_insider_id');
-    }
-
-    public function resultadosAnuales(): belongsToMany
-    {
-        return $this->belongsToMany(SubpanelResultadoAnual::class, 'panel_to_resultados_anuales', 'panel_id', 'subpanel_res_anual_id');
+        return $this->belongsToMany(Subpanel::class, 'panel_to_subpanel', 'panel_id', 'subpanel_id');
     }
 
     public function usuario(): BelongsTo

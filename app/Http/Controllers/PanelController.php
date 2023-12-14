@@ -18,7 +18,7 @@ class PanelController extends Controller
     }
 
     public function show($id) {
-        return Panel::with('seriesEstadisticas')->with('seriesEstadisticas.configuraciones.opciones')->with('insiders')->with('resultadosAnuales')->find($id);
+        return Panel::with('subpaneles')->with('subpaneles.configuraciones.opciones')->find($id);
     }
 
     public function delete($id) {
@@ -36,39 +36,15 @@ class PanelController extends Controller
         return response()->json(["message" => "Agregado" ], 201);
     }
 
-    public function addSerie($panelId, $serieId) {
+    public function addSubpanel($panelId, $subpanelId) {
         $panel = Panel::find($panelId);
-        $panel->seriesEstadisticas()->attach($serieId);
+        $panel->subpaneles()->attach($subpanelId);
         return $panel;
     }
 
-    public function addInsider($panelId, $insiderId) {
+    public function removeSubpanel($panelId, $subpanelId) {
         $panel = Panel::find($panelId);
-        $panel->insiders()->attach($insiderId);
-        return $panel;
-    }
-
-    public function addResultadoAnual($panelId, $resultadoAnualId) {
-        $panel = Panel::find($panelId);
-        $panel->resultadosAnuales()->attach($resultadoAnualId);
-        return $panel;
-    }
-
-    public function removeSerie($panelId, $serieId) {
-        $panel = Panel::find($panelId);
-        $panel->seriesEstadisticas()->detach($serieId);
-        return $panel;
-    }
-
-    public function removeInsider($panelId, $insiderId) {
-        $panel = Panel::find($panelId);
-        $panel->insiders()->detach($insiderId);
-        return $panel;
-    }
-
-    public function removeResultadoAnual($panelId, $resultadoAnualId) {
-        $panel = Panel::find($panelId);
-        $panel->resultadosAnuales()->detach($resultadoAnualId);
+        $panel->subpaneles()->detach($subpanelId);
         return $panel;
     }
 }

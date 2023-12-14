@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('subpaneles_serie_estadistica', function (Blueprint $table) {
+        Schema::create('subpaneles', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
             $table->string('nombre');
-            $table->string('descripcion')->nullable();
+            $table->string('descripcion');
             $table->string('url');
-            $table->string('ente')->nullable();
-
+            $table->string('ente');
+            $table->string('type')->nullable();
         });
     }
 
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('subpaneles_serie_estadistica');
+        Schema::dropIfExists('subpaneles');
     }
 };
