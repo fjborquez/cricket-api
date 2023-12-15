@@ -17,7 +17,9 @@ class Panel extends Model
 
     public function subpaneles(): BelongsToMany
     {
-        return $this->belongsToMany(Subpanel::class, 'panel_to_subpanel', 'panel_id', 'subpanel_id');
+        return $this->belongsToMany(Subpanel::class, 'panel_to_subpanel', 'panel_id', 'subpanel_id')
+            ->withPivot('position')
+            ->orderByPivot('position', 'asc');
     }
 
     public function usuario(): BelongsTo

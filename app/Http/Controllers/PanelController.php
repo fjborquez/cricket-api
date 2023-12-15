@@ -36,9 +36,10 @@ class PanelController extends Controller
         return response()->json(["message" => "Agregado" ], 201);
     }
 
-    public function addSubpanel($panelId, $subpanelId) {
+    public function addSubpanel($panelId, $subpanelId, Request $request) {
         $panel = Panel::find($panelId);
-        $panel->subpaneles()->attach($subpanelId);
+        $panel->subpaneles()->syncWithoutDetaching([$subpanelId]);
+        $panel->subpaneles()->updateExistingPivot($subpanelId, ['position' => $request->get('position', 0)]);
         return $panel;
     }
 

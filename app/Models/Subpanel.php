@@ -19,7 +19,9 @@ class Subpanel extends Model
     ];
 
     public function paneles() {
-        return $this->belongsToMany(Panel::class, 'panel_to_subpanel', 'subpanel_id', 'panel_id');
+        return $this->belongsToMany(Panel::class, 'panel_to_subpanel', 'subpanel_id', 'panel_id')
+            ->withPivot('position')
+            ->orderByPivot('position', 'asc');
     }
 
     public function configuraciones(): HasMany {
