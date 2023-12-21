@@ -16,7 +16,8 @@ class Subpanel extends Model
         'serieEstadistica' => SubpanelSerieEstadistica::class,
         'resultadoAnual' => SubpanelResultadoAnual::class,
         'insider' => SubpanelInsider::class,
-        'cantidadPuntosAgrupados' => SubpanelCantidadPuntosAgrupados::class
+        'cantidadPuntosAgrupados' => SubpanelCantidadPuntosAgrupados::class,
+        'mapa' => SubpanelMapa::class
     ];
 
     public function paneles() {
