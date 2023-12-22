@@ -9,4 +9,6 @@ use Parental\HasParent;
 class SubpanelCantidadPuntosAgrupados extends Subpanel
 {
     use HasFactory, HasParent;
+
+    protected $fillable = ['grouped_by'];
 }
