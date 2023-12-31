@@ -39,7 +39,11 @@ class PanelController extends Controller
     public function addSubpanel($panelId, $subpanelId, Request $request) {
         $panel = Panel::find($panelId);
         $panel->subpaneles()->syncWithoutDetaching([$subpanelId]);
-        $panel->subpaneles()->updateExistingPivot($subpanelId, ['position' => $request->get('position', 0)]);
+        $panel->subpaneles()->updateExistingPivot($subpanelId, [
+            'position' => $request->get('position', 0),
+            'note' => $request->get('note', '')
+        ]);
+
         return $panel;
     }
 

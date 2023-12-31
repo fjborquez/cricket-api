@@ -19,6 +19,7 @@ class Panel extends Model
     {
         return $this->belongsToMany(Subpanel::class, 'panel_to_subpanel', 'panel_id', 'subpanel_id')
             ->withPivot('position')
+            ->withPivot('note')
             ->orderByPivot('position', 'asc');
     }
 

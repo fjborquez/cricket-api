@@ -17,12 +17,14 @@ class Subpanel extends Model
         'resultadoAnual' => SubpanelResultadoAnual::class,
         'insider' => SubpanelInsider::class,
         'cantidadPuntosAgrupados' => SubpanelCantidadPuntosAgrupados::class,
-        'mapa' => SubpanelMapa::class
+        'mapa' => SubpanelMapa::class,
+        'note' => SubpanelNote::class,
     ];
 
     public function paneles() {
         return $this->belongsToMany(Panel::class, 'panel_to_subpanel', 'subpanel_id', 'panel_id')
             ->withPivot('position')
+            ->withPivot('note')
             ->orderByPivot('position', 'asc');
     }
 
