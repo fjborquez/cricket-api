@@ -18,7 +18,9 @@ class PanelController extends Controller
     }
 
     public function show($id) {
-        return Panel::with('subpaneles')->with('subpaneles.configuraciones.opciones')->find($id);
+        return Panel::with(['subpaneles' => function ($query) {
+            return $query->orderBy('position', 'asc');
+        }])->with('subpaneles.configuraciones.opciones')->find($id);
     }
 
     public function delete($id) {
