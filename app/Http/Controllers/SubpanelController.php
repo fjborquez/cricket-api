@@ -28,6 +28,11 @@ class SubpanelController extends Controller
         $subpanel->grouped_by = $request->grouped_by;
         $subpanel->save();
         return $subpanel;
+    }
 
+    public function delete($id) {
+        $subpanel = Subpanel::find($id);
+        $subpanel->delete();
+        return $subpanel;
     }
 }

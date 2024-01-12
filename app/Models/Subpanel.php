@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Parental\HasChildren;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Subpanel extends Model
 {
-    use HasFactory, HasChildren;
+    use HasFactory, HasChildren, SoftDeletes;
     protected $table = 'subpaneles';
     protected $fillable = ['nombre', 'descripcion', 'url', 'ente', 'type'];
     protected $childTypes = [
