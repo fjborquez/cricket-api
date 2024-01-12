@@ -17,4 +17,17 @@ class SubpanelController extends Controller
 
         return $subpanels->get();
     }
+
+    public function create(Request $request) {
+        $subpanel = new Subpanel();
+        $subpanel->nombre = $request->nombre;
+        $subpanel->descripcion = $request->descripcion;
+        $subpanel->url = $request->url;
+        $subpanel->ente = $request->ente;
+        $subpanel->type = $request->type;
+        $subpanel->grouped_by = $request->grouped_by;
+        $subpanel->save();
+        return $subpanel;
+
+    }
 }

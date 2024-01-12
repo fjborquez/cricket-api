@@ -38,3 +38,4 @@ Route::middleware(['api'])->put('/paneles/{panel}/subpaneles/{serie}', [PanelCon
 Route::middleware(['api'])->delete('/paneles/{panel}/subpaneles/{serie}', [PanelController::class, 'removeSubpanel']);
 
 Route::middleware(['api'])->get('/subpaneles', [SubpanelController::class, 'index']);
+Route::middleware(['api'])->post('/subpaneles', [SubpanelController::class, 'create']);
