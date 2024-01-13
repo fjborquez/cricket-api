@@ -6,6 +6,7 @@ use App\Http\Controllers\SubpanelController;
 use App\Http\Controllers\SubpanelInsiderController;
 use App\Http\Controllers\SubpanelResultadoAnualController;
 use App\Http\Controllers\SubpanelSerieEstadisticaController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -40,3 +41,5 @@ Route::middleware(['api'])->delete('/paneles/{panel}/subpaneles/{serie}', [Panel
 Route::middleware(['api'])->get('/subpaneles', [SubpanelController::class, 'index']);
 Route::middleware(['api'])->post('/subpaneles', [SubpanelController::class, 'create']);
 Route::middleware(['api'])->delete('/subpaneles/{id}', [SubpanelController::class, 'delete']);
+
+Route::middleware(['api'])->get('/users', [UserController::class, 'index']);
