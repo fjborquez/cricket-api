@@ -44,3 +44,4 @@ Route::middleware(['api'])->delete('/subpaneles/{id}', [SubpanelController::clas
 
 Route::middleware(['api'])->get('/users', [UserController::class, 'index']);
 Route::middleware(['api'])->post('/users', [UserController::class, 'create']);
+Route::middleware(['api'])->delete('/users/{id}', [UserController::class, 'delete']);

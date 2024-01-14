@@ -20,4 +20,8 @@ class UserController extends Controller
         $user->role = $request->role;
         return $user->save();
     }
+
+    public function delete($id) {
+        return User::find($id)->delete();
+    }
 }
