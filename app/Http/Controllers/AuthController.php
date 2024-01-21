@@ -9,6 +9,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use MiladRahimi\Jwt\Cryptography\Keys\HmacKey;
+use MiladRahimi\Jwt\Cryptography\Algorithms\Hmac\HS256;
+use MiladRahimi\Jwt\Validator\DefaultValidator;
+use MiladRahimi\Jwt\Parser;
+use MiladRahimi\Jwt\Exceptions\InvalidTokenException;
+use MiladRahimi\Jwt\Exceptions\ValidationException;
 
 class AuthController extends Controller
 {
@@ -110,5 +116,30 @@ class AuthController extends Controller
             'token_type' => 'bearer',
             'expires_in' => JWTAuth::factory()->getTTL() * 60
         ]);
+    }
+
+    public function verify(Request $request)
+    {
+        $jwt = trim(trim($request->header('authorization'), 'Bearer'));
+
+        if (empty($jwt)) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $secret = env('JWT_SECRET');
+        $key = new HmacKey($secret);
+        $signer = new HS256($key);
+        $validator = new DefaultValidator();
+        $parser = new Parser($signer, $validator);
+
+        try {
+            $parser->parse($jwt);
+        } catch (InvalidTokenException $e) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        return response()->json(['message' => 'Token is valid'], 200);
     }
 }
