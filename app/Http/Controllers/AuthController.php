@@ -123,7 +123,7 @@ class AuthController extends Controller
         $jwt = str_replace(["\n", "\r"],'', trim(trim($request->header('authorization'), 'Bearer')));
 
         if (empty($jwt)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'Unauthorized 1'], 401);
         }
 
         $secret = env('JWT_SECRET');
@@ -135,9 +135,9 @@ class AuthController extends Controller
         try {
             $parser->parse($jwt);
         } catch (InvalidTokenException $e) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'Unauthorized 2'], 401);
         } catch (ValidationException $e) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'Unauthorized 3'], 401);
         }
 
         return response()->json(['message' => 'Token is valid'], 200);
