@@ -120,7 +120,7 @@ class AuthController extends Controller
 
     public function verify(Request $request)
     {
-        $jwt = trim(trim($request->header('authorization'), 'Bearer'));
+        $jwt = str_replace(["\n", "\r"],'', trim(trim($request->header('authorization'), 'Bearer')));
         dd($jwt);
         if (empty($jwt)) {
             return response()->json(['error' => 'Unauthorized'], 401);
