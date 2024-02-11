@@ -3,28 +3,28 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Http\Requests\RegisterRequest;
+use App\Services\TokenService;
+use App\Services\UserService;
+use App\Traits\APIResponses;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
-use Tymon\JWTAuth\Facades\JWTAuth;
-use MiladRahimi\Jwt\Cryptography\Keys\HmacKey;
-use MiladRahimi\Jwt\Cryptography\Algorithms\Hmac\HS256;
-use MiladRahimi\Jwt\Validator\DefaultValidator;
-use MiladRahimi\Jwt\Parser;
-use MiladRahimi\Jwt\Exceptions\InvalidTokenException;
-use MiladRahimi\Jwt\Exceptions\ValidationException;
 
 class AuthController extends Controller
 {
+    use APIResponses;
+
+    protected $userService;
+    protected $tokenService;
+
     /**
      * Create a new AuthController instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(UserService $userService, TokenService $tokenService)
     {
+        $this->userService = $userService;
+        $this->tokenService = $tokenService;
         $this->middleware('auth:api', ['except' => ['login', 'register', 'verify']]);
     }
 
@@ -38,36 +38,23 @@ class AuthController extends Controller
         $credentials = request(['email', 'password']);
 
         if (! $token =  auth('api')->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return $this->unauthorized(['error' => 'Unauthorized']);
         }
 
         return $this->respondWithToken($token);
     }
 
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|between:2,100',
-            'email' => 'required|string|email|max:100|unique:users',
-            'password' => 'required|string|confirmed|min:6',
-        ]);
-        if($validator->fails()){
-            return response()->json($validator->errors()->toJson(), 400);
-        }
+        $userData = $request->validated();
+        $user = $this->userService->create($userData);
+        $token = $this->tokenService->create($user);
 
-        $user = User::create([
-            'name' => $request->get('name'),
-            'email' => $request->get('email'),
-            'password' => Hash::make($request->get('password')),
-        ]);
-
-        $token = JWTAuth::fromUser($user);
-
-        return response()->json([
+        return $this->ok([
             'message' => 'User successfully registered',
             'user' => $user,
             'token' => $token,
-        ], 200);
+        ]);
     }
 
     /**
@@ -77,7 +64,9 @@ class AuthController extends Controller
      */
     public function me()
     {
-        return response()->json(auth()->user());
+        return $this->ok([
+            'user' => auth()->user()
+        ]);
     }
 
     /**
@@ -89,7 +78,9 @@ class AuthController extends Controller
     {
         auth()->logout();
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return $this->ok([
+            'message' => 'Successfully logged out'
+        ]);
     }
 
     /**
@@ -99,7 +90,7 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        return $this->respondWithToken(JWTAuth::refresh());
+        return $this->respondWithToken($this->tokenService->refresh());
     }
 
     /**
@@ -111,35 +102,30 @@ class AuthController extends Controller
      */
     protected function respondWithToken($token)
     {
-        return response()->json([
+        return $this->ok([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => JWTAuth::factory()->getTTL() * 60
+            'expires_in' => $this->tokenService->expiration(),
         ]);
     }
 
     public function verify(Request $request)
     {
-        $jwt = trim(trim($request->header('authorization'), 'Bearer'));
+        $token = $request->header('authorization');
+        $jwt = trim(trim($token, 'Bearer'));
 
-        if (empty($jwt)) {
-            return response()->json(['error' => 'Unauthorized 1'], 401);
-        }
-
-        $secret = env('JWT_SECRET');
-        $key = new HmacKey($secret);
-        $signer = new HS256($key);
-        $validator = new DefaultValidator();
-        $parser = new Parser($signer, $validator);
+        $error = [
+            'error' => 'Unauthorized'
+        ];
 
         try {
-            $parser->parse($jwt);
-        } catch (InvalidTokenException $e) {
-            return response()->json(['error' => 'Unauthorized 2'], 401);
-        } catch (ValidationException $e) {
-            return response()->json(['error' => 'Unauthorized 3'], 401);
+            $this->tokenService->verify($jwt);
+        } catch (\Exception $e) {
+            return $this->unauthorized($error);
         }
 
-        return response()->json(['message' => 'Token is valid'], 200);
+        return $this->ok([
+            'message' => 'Token is valid'
+        ]);
     }
 }
