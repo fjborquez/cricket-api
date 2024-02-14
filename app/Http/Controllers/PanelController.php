@@ -3,24 +3,32 @@
 namespace App\Http\Controllers;
 
 use App\Models\Panel;
+use App\Services\PanelService;
+use App\Traits\APIResponses;
 use Illuminate\Http\Request;
 
 class PanelController extends Controller
 {
+    use APIResponses;
+
+    protected PanelService $panelService;
+
+    public function __construct(PanelService $panelService) {
+        $this->panelService = $panelService;
+    }
+
     public function index(Request $request) {
-        $paneles = new Panel;
+        $filters = [];
 
         if ($request->has('user_id')) {
-            $paneles = $paneles->where('user_id', $request->get('user_id'));
+            $filters['user_id'] = $request->get('user_id');
         }
 
-        return $paneles->get();
+        return $this->panelService->getAll($filters);
     }
 
     public function show($id) {
-        return Panel::with(['subpaneles' => function ($query) {
-            return $query->orderBy('position', 'asc');
-        }])->with('subpaneles.configuraciones.opciones')->find($id);
+        return $this->panelService->get($id);
     }
 
     public function delete($id) {
@@ -29,29 +37,26 @@ class PanelController extends Controller
 
     public function store(Request $request) {
         $user = auth('api')->user();
-        $panel = new Panel;
-        $panel->nombre = $request->nombre;
-        $panel->descripcion = $request->descripcion;
-        $panel->user_id = $user->id;
-        $panel->save();
 
-        return response()->json(["message" => "Agregado" ], 201);
+        $data = [];
+        $data['nombre'] = $request->nombre;
+        $data['descripcion'] = $request->descripcion;
+        $data['user_id'] = $user->id;
+        $this->panelService->create($data);
+
+        return $this->created(["message" => "Agregado"]);
     }
 
     public function addSubpanel($panelId, $subpanelId, Request $request) {
-        $panel = Panel::find($panelId);
-        $panel->subpaneles()->syncWithoutDetaching([$subpanelId]);
-        $panel->subpaneles()->updateExistingPivot($subpanelId, [
+        $pivotValues = [
             'position' => $request->get('position', 0),
             'note' => $request->get('note', '')
-        ]);
+        ];
 
-        return $panel;
+        return $this->panelService->addSubpanel($panelId, $subpanelId, $pivotValues);
     }
 
     public function removeSubpanel($panelId, $subpanelId) {
-        $panel = Panel::find($panelId);
-        $panel->subpaneles()->detach($subpanelId);
-        return $panel;
+        return $this->panelService->removeSubpanel($panelId, $subpanelId);
     }
 }

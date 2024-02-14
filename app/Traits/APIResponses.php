@@ -7,6 +7,10 @@ trait APIResponses {
         return $this->response(200, $data);
     }
 
+    public function created(array $data) {
+        return $this->response(201, $data);
+    }
+
     public function unauthorized(array $data) {
         return $this->response(401, $data);
     }
